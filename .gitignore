@@ -1,3 +1,9 @@
+# Ignore emacs backup files.
+*~
+
+# Ignore erlang compiled file.
+*beam
+
 #################
 ## Eclipse
 #################
