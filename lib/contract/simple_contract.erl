@@ -1,7 +1,7 @@
 -module(simple_contract).
 -include("contract_records.hrl").
 -include_lib("eunit/include/eunit.hrl").
--compile(export_all).
+-export([make_contract/5]).
 
 
 %% Constructor.
@@ -27,12 +27,29 @@ instrument(#simple_contract{instrument=Instrument}) ->
 
 
 %% Unit tests.
-ctor_test() ->
-    ToTest = make_contract(long, #party{}, 3.1415,
-			   #price{amount=9.265, currency=usd},
+long_test() ->
+    ContractAmount = 3.1415,
+    ContractPrice = 9.265,
+    Party = party:new("Long Party"),
+    ToTest = make_contract(long, Party, ContractAmount,
+			   #price{amount=ContractPrice, currency=usd},
 			   #instrument{}),
-    long = kind(ToTest),
-    #party{} = counterparty(ToTest),
-    3.1415 = amount(ToTest),
-    #price{amount=9.265, currency=usd} = price(ToTest),
-    #instrument{} = instrument(ToTest).
+    ?assertEqual(long, kind(ToTest)),
+    ?assertEqual(Party, counterparty(ToTest)),
+    ?assertEqual(ContractAmount, amount(ToTest)),
+    ?assertEqual(#price{amount=ContractPrice, currency=usd}, price(ToTest)),
+    ?assertEqual(#instrument{}, instrument(ToTest)).
+short_test() ->
+    ContractAmount = 27.18,
+    ContractPrice = 1.414,
+    Party = party:new("Short Party"),
+    Currency = cad,
+    ToTest = make_contract(short, Party, ContractAmount,
+			   #price{amount=ContractPrice, currency=Currency},
+			   #instrument{}),
+    ?assertEqual(short, kind(ToTest)),
+    ?assertEqual(Party, counterparty(ToTest)),
+    ?assertEqual(ContractAmount, amount(ToTest)),
+    ?assertEqual(#price{amount=ContractPrice, currency=Currency},
+		 price(ToTest)),
+    ?assertEqual(#instrument{}, instrument(ToTest)).
